@@ -1,4 +1,3 @@
-
 -- Carregamento dos módulos Fluent e outros
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
@@ -34,7 +33,7 @@ ThunderToggleUI.Size = UDim2.new(0, 50, 0, 50)
 ThunderToggleUI.Font = Enum.Font.FredokaOne
 ThunderToggleUI.Text = ""
 ThunderToggleUI.TextColor3 = Color3.fromRGB(0, 0, 0)
-ThunderToggleUI.TextSize = 14
+ThunderToggleUI.TextSize = 14.000
 ThunderToggleUI.Draggable = true
 
 ThunderCornerUI.Name = "ThunderCornerUI"
@@ -43,9 +42,9 @@ ThunderCornerUI.Parent = ThunderToggleUI
 ThunderImageUI.Name = "MODILEMAGE"
 ThunderImageUI.Parent = ThunderToggleUI
 ThunderImageUI.BackgroundColor3 = Color3.fromRGB(192, 192, 192)
-ThunderImageUI.BackgroundTransparency = 1
+ThunderImageUI.BackgroundTransparency = 1.000
 ThunderImageUI.BorderSizePixel = 0
-ThunderImageUI.Position = UDim2.new(0, 0, 0, 0)
+ThunderImageUI.Position = UDim2.new(0.0, 0, 0.0, 0)
 ThunderImageUI.Size = UDim2.new(0, 50, 0, 50)
 ThunderImageUI.Image = "rbxassetid://18658183492"
 
@@ -60,7 +59,7 @@ local dragInput, mousePos, framePos
 local function updateInput(input)
     local delta = input.Position - mousePos
     ThunderToggleUI.Position = UDim2.new(
-        framePos.X.Scale,
+        framePos.X.Scale, a
         framePos.X.Offset + delta.X,
         framePos.Y.Scale,
         framePos.Y.Offset + delta.Y
@@ -98,17 +97,18 @@ local bikeNames = {}
 local eggsName = {}
 local interactParts = {}
 local crewExist = {}
-local areasExist = {}
+local plotsExist = {}
 local selectedBike = 1
-local trained = 0
+local bolts = 0
 local keepCrewFarm = false
+local keepWinFarm = false
 local keepAutoUpgrade = false
-local keepAutoOpenEggs = false
 local keepTraining = false  -- Variável de controle para o loop
 
 -- Funções auxiliares
 function getWorld(value)
-    return math.ceil(value / 3)
+    local world = math.ceil(value / 3)
+    return world
 end
 
 function addBikesToList()
@@ -117,17 +117,16 @@ function addBikesToList()
     end
 end
 
-function addAreasToList()
-    areasExist = {}
-    for _, area in pairs(workspace.Areas:GetChildren()) do
-        table.insert(areasExist, area.Name)  -- Use o nome da área em vez do objeto completo
-    end
-end
-
 function addCrewToList()
     crewExist = {}
     for _, bolts in pairs(workspace.Active.Bolts:GetChildren()) do
         table.insert(crewExist, bolts)
+    end
+end
+function addPlotToList()
+    plotsExist = {}
+    for _, plots in pairs(workspace.Areas["3"].Plots:GetChildren()) do
+        table.insert(plotsExist, plots)
     end
 end
 
@@ -160,30 +159,34 @@ local function removeDuplicatesAndSortDescending(list)
 
     for _, v in ipairs(list) do
         if not hash[v] then
-            table.insert(uniqueList, v)
+            uniqueList[#uniqueList + 1] = v
             hash[v] = true
         end
     end
 
     table.sort(uniqueList, function(a, b) return a > b end)
+
     return uniqueList
 end
 
 -- Atualize listas e dropdowns
 addBikesToList()
 addEggsToList()
-addAreasToList()
 addInteractsToList()
+addPlotToList()
 bikeNames = removeDuplicatesAndSortDescending(bikeNames)
-eggsName = removeDuplicatesAndSortDescending(eggsName)
 
 -- Função para obter a velocidade da bike
 function getSpeedBike(selected)
-    local worldArgs = { getWorld(selected) }
+    local worldArgs = {
+        [1] = getWorld(selected)
+    }
     print(getWorld(selected))
     game:GetService("ReplicatedStorage").Packages.Knit.Services.AreaService.RE.SetArea:FireServer(unpack(worldArgs))
 
-    local args = { workspace.Active.Bikes:FindFirstChild(selected) }
+    local args = {
+        [1] = workspace.Active.Bikes:FindFirstChild(selected)
+    }
     game:GetService("ReplicatedStorage").Packages.Knit.Services.TrainService.RE.MountBike:FireServer(unpack(args))
 end
 
@@ -196,28 +199,6 @@ local Tabs = {
 }
 
 local Options = Fluent.Options
-local WorldsDropdown = Tabs.Teleports:AddDropdown("TeleportWorlds", {
-    Title = "Areas",
-    Values = areasExist,
-    Multi = false,
-    Default = 1,
-})
-WorldsDropdown:OnChanged(function(value)
-    local selectedAreaName = value
-    local player = game.Players.LocalPlayer
-    local targetArea = workspace.Areas:FindFirstChild(selectedAreaName)
-    if targetArea and targetArea:FindFirstChild("Home") then
-        local home = targetArea:FindFirstChild("Home")
-        local newCFrame = CFrame.new(home.position.x, home.position.y + 5, home.position.z)
-        player.Character:SetPrimaryPartCFrame(newCFrame)
-    else
-        Fluent:Notify({
-            Title = "Erro",
-            Content = "Área não encontrada.",
-            Duration = 5
-        })
-    end
-end)
 
 local BikesDropdown = Tabs.Main:AddDropdown("Dropdown", {
     Title = "Bikes",
@@ -264,25 +245,58 @@ end)
 -- Configuração dos toggles
 local StartFarmSpeed = Tabs.Main:AddToggle("MyToggle", { Title = "Auto Speed", Default = false })
 local StartScrewFarm = Tabs.Main:AddToggle("ScrewFarm", { Title = "Auto Bolt", Default = false })
-local StartUpgrades = Tabs.Main:AddToggle("AutoUpgrades", { Title = "Auto Upgrades", Default = false })
-local StartAutoEggs = Tabs.Eggs:AddToggle("AutoOpenEggs", { Title = "Auto Open Eggs", Default = false })
+local StartWinFarm = Tabs.Main:AddToggle("WinFarm", { Title = "Auto Win", Default = false })
+local StartUpgrades = Tabs.Main:AddToggle("AutoOpenEggs", { Title = "Auto Oep", Default = false })
 
-StartAutoEggs:OnChanged(function(value)
-    keepAutoOpenEggs = value
+function teleportTo(part, destination)
+    part.CFrame = destination.CFrame
+end
+
+function checkAndTeleport(part, destination)
+    for _, child in ipairs(part:GetChildren()) do
+        if child:IsA("BasePart") then
+            teleportTo(child, destination)
+        end
+        checkAndTeleport(child, destination)
+    end
+end
+
+StartWinFarm:OnChanged(function(value)
+    keepWinFarm = value
     if value then
-        coroutine.wrap(function()
-            while keepAutoOpenEggs do
-                openEgg(selectedEgg)
-                task.wait(0.1)
+        local RunService = game:GetService("RunService")
+        local connection
+        connection = RunService.Heartbeat:Connect(function()
+            if keepWinFarm then
+                addPlotToList()
+                local player = game.Players.LocalPlayer
+                for _, plot in pairs(plotsExist) do
+                    if plot then
+                        game:GetService("ReplicatedStorage").Packages.Knit.Services.MowerService.RE.Equip:FireServer()
+                        player.Character:SetPrimaryPartCFrame(plot.CFrame)
+                        local destination = workspace.PolarFF_FF.Mower.Spinner.spinPart
+                        while true do
+                          for _, area in ipairs(workspace.Areas:GetChildren()) do
+                            local grass = area:FindFirstChild("Grass")
+                            if grass then
+                              checkAndTeleport(grass)
+                            end
+                          end
+                          wait(.5)
+                      end
+                    end
+                end
+            else
+                connection:Disconnect()
             end
-        end)()
+        end)
     end
 end)
 
 StartUpgrades:OnChanged(function(value)
     keepAutoUpgrade = value
     if value then
-        coroutine.wrap(function()
+       coroutine.wrap(function()
             while keepAutoUpgrade do
                 game:GetService("ReplicatedStorage").Packages.Knit.Services.MowerService.RE.Upgrade:FireServer()
                 task.wait(5)
@@ -302,6 +316,8 @@ StartScrewFarm:OnChanged(function(value)
                 local player = game.Players.LocalPlayer
                 for _, bolt in pairs(crewExist) do
                     if bolt then
+                       
+                        bolts = bolts + 1
                         player.Character:SetPrimaryPartCFrame(bolt.CFrame)
                     end
                 end
@@ -311,6 +327,7 @@ StartScrewFarm:OnChanged(function(value)
         end)
     end
 end)
+
 
 
 StartFarmSpeed:OnChanged(function(value)
@@ -328,7 +345,6 @@ StartFarmSpeed:OnChanged(function(value)
             while keepTraining do
                 trained = trained + 1
                 game:GetService("ReplicatedStorage").Packages.Knit.Services.TrainService.RE.Click:FireServer()
-                task.wait(0.1)  -- Aguarda um pouco antes de repetir o loop para evitar sobrecarga
             end
         end)()
     else
