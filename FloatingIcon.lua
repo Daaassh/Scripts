@@ -1,6 +1,28 @@
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+local MarketplaceService = game:GetService("MarketplaceService")
+
 local MinimizeButton = {}
 
-function MinimizeButton.new(window)
+local function getGameName()
+    local success, productInfo = pcall(MarketplaceService.GetProductInfo, MarketplaceService, game.PlaceId)
+    return success and productInfo.Name or "Anime Dimensions"
+end
+
+function MinimizeButton.createWindow()
+    local gameName = getGameName()
+
+    local Window = Fluent:CreateWindow({
+        Title = "Game: " .. gameName,
+        SubTitle = "by Polar",
+        TabWidth = 160,
+        Size = UDim2.fromOffset(580, 460),
+        Acrylic = true,
+        Theme = "Dark",
+        MinimizeKey = Enum.KeyCode.LeftControl
+    })
+
     local ThunderScreen = Instance.new("ScreenGui")
     local ThunderToggleUI = Instance.new("TextButton")
     local ThunderCornerUI = Instance.new("UICorner")
@@ -34,13 +56,18 @@ function MinimizeButton.new(window)
     ThunderImageUI.Size = UDim2.new(0, 50, 0, 50)
     ThunderImageUI.Image = "rbxassetid://18728889062"
 
-    ThunderToggleUI.MouseButton1Click:Connect(function()
-        if window:IsMinimized() then
-            window:Restore()
+    local isVisible = true
+
+    local function toggleVisibility()
+        if isVisible then
+            Window:Minimize()
         else
-            window:Minimize()
+            Window:Restore()
         end
-    end)
+        isVisible = not isVisible
+    end
+
+    ThunderToggleUI.MouseButton1Click:Connect(toggleVisibility)
 
     -- Função de arrastar
     local dragging = false
@@ -81,6 +108,8 @@ function MinimizeButton.new(window)
             updateInput(input)
         end
     end)
+
+    return Window
 end
 
 return MinimizeButton
