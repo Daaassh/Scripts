@@ -29,7 +29,7 @@ ThunderImageUI.BackgroundTransparency = 1.000
 ThunderImageUI.BorderSizePixel = 0
 ThunderImageUI.Position = UDim2.new(0.0, 0, 0.0, 0)
 ThunderImageUI.Size = UDim2.new(0, 50, 0, 50)
-ThunderImageUI.Image = "rbxassetid://18728889062"
+ThunderImageUI.Image = "rbxassetid://18729222019"
 
 ThunderToggleUI.MouseButton1Click:Connect(function()
     Window:Minimize()
