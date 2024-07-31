@@ -32,10 +32,14 @@ function MinimizeButton.new(window)
     ThunderImageUI.BorderSizePixel = 0
     ThunderImageUI.Position = UDim2.new(0.0, 0, 0.0, 0)
     ThunderImageUI.Size = UDim2.new(0, 50, 0, 50)
-    ThunderImageUI.Image = "rbxassetid://18729222019"
+    ThunderImageUI.Image = "rbxassetid://18728889062"
 
     ThunderToggleUI.MouseButton1Click:Connect(function()
-        window:SetVisible(not window:IsVisible())
+        if window:IsMinimized() then
+            window:Restore()
+        else
+            window:Minimize()
+        end
     end)
 
     -- Função de arrastar
