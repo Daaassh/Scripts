@@ -54,21 +54,12 @@ function MinimizeButton.createWindow()
     ThunderImageUI.BorderSizePixel = 0
     ThunderImageUI.Position = UDim2.new(0.0, 0, 0.0, 0)
     ThunderImageUI.Size = UDim2.new(0, 50, 0, 50)
-    ThunderImageUI.Image = "rbxassetid://18728889062"
+    ThunderImageUI.Image = "rbxassetid://18729222019"
 
-    local isVisible = true
-
-    local function toggleVisibility()
-        if isVisible then
-            Window:Minimize()
-        else
-            Window:Restore()
-        end
-        isVisible = not isVisible
-    end
-
-    ThunderToggleUI.MouseButton1Click:Connect(toggleVisibility)
-
+    ThunderToggleUI.MouseButton1Click:Connect(function()
+        Window:Minimize()
+    end)
+    
     -- Função de arrastar
     local dragging = false
     local dragInput, mousePos, framePos
