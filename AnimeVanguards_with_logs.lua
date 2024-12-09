@@ -2,8 +2,8 @@ if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
-print("[DEBUG]: Requisitando ou carregando - if game.CreatorId ~= 17219742 or game.PlaceId == 18219125606 or not getgenv or not getgenv or not getupvalues or not require or not assert or not setmetatable or not loadstring or not isfile or not readfile or not delfile or not writefile or not isfolder or not delfolder or not listfiles or not makefolder or not firesignal or (getgenv and (getgenv().LoadedFluentCrazyDay or getgenv().LoadingAnimeVanguards)) or (identifyexecutor and identifyexecutor():find("Fluxus")) then")
-if game.CreatorId ~= 17219742 or game.PlaceId == 18219125606 or not getgenv or not getgenv or not getupvalues or not require or not assert or not setmetatable or not loadstring or not isfile or not readfile or not delfile or not writefile or not isfolder or not delfolder or not listfiles or not makefolder or not firesignal or (getgenv and (getgenv().LoadedFluentCrazyDay or getgenv().LoadingAnimeVanguards)) or (identifyexecutor and identifyexecutor():find("Fluxus")) then
+print("[DEBUG]: Requisitando ou carregando - if game.CreatorId ~= 17219742 or game.PlaceId == 16146832113 or not getgenv or not getgenv or not getupvalues or not require or not assert or not setmetatable or not loadstring or not isfile or not readfile or not delfile or not writefile or not isfolder or not delfolder or not listfiles or not makefolder or not firesignal or (getgenv and (getgenv().LoadedFluentCrazyDay or getgenv().LoadingAnimeVanguards)) or (identifyexecutor and identifyexecutor():find("Fluxus")) then")
+if game.CreatorId ~= 17219742 or game.PlaceId == 16146832113 or not getgenv or not getgenv or not getupvalues or not require or not assert or not setmetatable or not loadstring or not isfile or not readfile or not delfile or not writefile or not isfolder or not delfolder or not listfiles or not makefolder or not firesignal or (getgenv and (getgenv().LoadedFluentCrazyDay or getgenv().LoadingAnimeVanguards)) or (identifyexecutor and identifyexecutor():find("Fluxus")) then
     return
 else
     getgenv().LoadingAnimeVanguards = "2.4"
